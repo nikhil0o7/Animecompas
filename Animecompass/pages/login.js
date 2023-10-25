@@ -6,9 +6,51 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Alert,
 } from "react-native";
+import { auth } from "../config";
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailValidationMessage, setEmailValidationMessage] = useState("");
+
+  const validateEmail = () => {
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    if (!emailPattern.test(email)) {
+      setEmailValidationMessage("Invalid email address.");
+    } else {
+      setEmailValidationMessage("");
+    }
+  };
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        setEmail("");
+        setPassword("");
+        navigation.navigate("Home");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (
+          errorCode === "auth/invalid-email" ||
+          errorCode === "auth/wrong-password"
+        ) {
+          Alert.alert(
+            "Invalid Credentials",
+            "The email or password is incorrect. Please try again."
+          );
+        } else {
+          Alert.alert("Error", errorMessage);
+        }
+      });
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Animecompass</Text>
@@ -17,12 +59,20 @@ export default function Login({ navigation }) {
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#BCA37F"
+        value={email}
+        onBlur={validateEmail}
+        onChangeText={setEmail}
       />
+      {emailValidationMessage ? (
+        <Text style={styles.validationMessage}>{emailValidationMessage}</Text>
+      ) : null}
       <TextInput
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#BCA37F"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
       <TouchableOpacity
         onPress={() => {
@@ -31,14 +81,16 @@ export default function Login({ navigation }) {
       >
         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          navigation.navigate("Home");
-        }}
-      >
+      <TouchableOpacity style={styles.button} onPress={loginUser}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
+      {/* <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
+        <Image
+          source={require("./../assets/google.png")} // Replace with the path to your Google icon.
+          style={styles.googleIcon}
+        />
+        <Text style={styles.googleButtonText}>Sign In with Google</Text>
+      </TouchableOpacity> */}
       <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
         <Text style={styles.signupText}>Not a member? Register now</Text>
       </TouchableOpacity>
@@ -103,5 +155,31 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: "center",
     textDecorationLine: "underline",
+  },
+  googleButton: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    height: 50,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    paddingHorizontal: 10,
+  },
+  googleButtonText: {
+    color: "#000",
+    fontWeight: "bold",
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  googleIcon: {
+    width: 30,
+    height: 30,
+  },
+  validationMessage: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 5,
+    marginBottom: 10,
   },
 });

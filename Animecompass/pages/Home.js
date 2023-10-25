@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import IonIcon from "react-native-vector-icons/Ionicons";
+import { Card, Avatar, IconButton } from "react-native-paper";
 
 const Home = ({ navigation }) => {
   return (
@@ -17,15 +18,51 @@ const Home = ({ navigation }) => {
           onPress={() => navigation.navigate("Login")}
         />
       </View>
-      {/* <Image source={require("../assets/anime.png")} style={styles.image} /> */}
+
       <Text style={styles.categories}>Categories</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>ALL ANIME</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonRecommended}>
-          <Text style={styles.buttonText}>RECOMMENDED ANIME</Text>
-        </TouchableOpacity>
+      <View style={styles.cardContainer}>
+        <Card style={styles.card}>
+          <Card.Title
+            title="All Anime"
+            subtitle="View all anime"
+            titleStyle={{ color: "white" }}
+            left={(props) => (
+              <Avatar.Icon
+                {...props}
+                icon="animation-play-outline"
+                color="#113946"
+              />
+            )}
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon="arrow-right"
+                color="#113946"
+                onPress={() => navigation.navigate("AnimeData")}
+              />
+            )}
+          />
+        </Card>
+
+        <Card style={styles.cardRecommended}>
+          <Card.Title
+            titleStyle={{ color: "white" }}
+            title="Recommended Anime"
+            subtitle="View anime recommendations"
+            subtitleStyle={{ color: "white" }}
+            left={(props) => (
+              <Avatar.Icon {...props} icon="star" color="#FFF2D8" />
+            )}
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon="arrow-right"
+                color="white"
+                onPress={() => navigation.navigate("RecommendedAnime")}
+              />
+            )}
+          />
+        </Card>
       </View>
     </View>
   );
@@ -61,14 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: "#BCA37F",
-    padding: 15,
-    borderRadius: 10,
-    flex: 1,
-    alignItems: "center",
-    marginHorizontal: 10,
-  },
+
   buttonRecommended: {
     backgroundColor: "#113946",
     padding: 15,
@@ -80,6 +110,23 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFF2D8",
     fontSize: 16,
+  },
+
+  cardContainer: {
+    flex: 1,
+  },
+  card: {
+    backgroundColor: "#BCA37F",
+    marginBottom: 10,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    color: "white",
+  },
+  cardRecommended: {
+    backgroundColor: "#113946",
+    borderRadius: 10,
+    marginHorizontal: 10,
+    color: "white",
   },
 });
 
