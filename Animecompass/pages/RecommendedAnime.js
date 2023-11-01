@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import Slider from "@react-native-community/slider";
 import SelectDropdown from "react-native-select-dropdown";
 import { Modal, Portal, Button, Provider } from "react-native-paper";
@@ -34,10 +40,16 @@ const RecommendedAnime = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Anime Recommendations</Text>
 
-        <Text style={styles.label}>Are you a beginner?</Text>
-        <SelectDropdown
+        <Text style={styles.label}>Anime Name?</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Anime Name"
+          onChangeText={setBeginner}
+          placeholderTextColor="#BCA37F"
+          value={beginner}
+        />
+        {/* <SelectDropdown
           data={beginnerOptions}
-          onSelect={(selectedItem) => setBeginner(selectedItem)}
           buttonTextAfterSelection={(selectedItem) => selectedItem}
           rowTextForSelection={(item) => item}
           dropdownIconColor="#113946"
@@ -45,7 +57,13 @@ const RecommendedAnime = () => {
           rowStyle={styles.input}
           dropdownStyle={styles.dropdownStyle}
           rowTextStyle={styles.rowText}
-        />
+        /> */}
+
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>
+            Get Recommendations (based on title){" "}
+          </Text>
+        </TouchableOpacity>
 
         <Text style={styles.label}>Anime genre:</Text>
         <SelectDropdown
@@ -64,7 +82,7 @@ const RecommendedAnime = () => {
         <Slider
           style={styles.slider}
           minimumValue={1}
-          maximumValue={5}
+          maximumValue={10}
           step={0.5}
           value={rating}
           onValueChange={(value) => setRating(value)}
