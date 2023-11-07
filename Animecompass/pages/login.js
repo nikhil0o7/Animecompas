@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
         const user = userCredential.user;
         setEmail("");
         setPassword("");
-        navigation.navigate("Home");
+        navigation.navigate("HomeScreen");
       })
       .catch((error) => {
         const errorCode = error.code;

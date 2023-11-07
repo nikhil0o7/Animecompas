@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules/
+animecompass-firebase-creds.json
 
 # Expo
 .expo/

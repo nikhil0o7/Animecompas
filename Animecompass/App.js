@@ -8,6 +8,7 @@ import AnimeTable from "./pages/AnimeData";
 import RecommendedAnime from "./pages/RecommendedAnime";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { PaperProvider } from "react-native-paper";
+import HomeScreen from "./pages/HomeScreen";
 
 const queryClient = new QueryClient();
 const Stack = createStackNavigator();
@@ -18,6 +19,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="SignUp" component={SignUp} />

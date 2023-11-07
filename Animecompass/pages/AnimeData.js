@@ -339,7 +339,7 @@ function AnimeTable() {
   const to = Math.min((page + 1) * itemsPerPage, filteredData.length);
   const dataToShow = filteredData.slice(from, to);
   return loading ? (
-    <View style={styles.container}>
+    <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color="#113946" />
     </View>
   ) : (
@@ -421,6 +421,12 @@ const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
     backgroundColor: "#FFF2D8",
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#FFF2D8",
+    justifyContent: "center",
+    paddingHorizontal: 10,
   },
   container: {
     flex: 1,
