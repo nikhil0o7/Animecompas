@@ -1,346 +1,430 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
-import { DataTable } from "react-native-paper";
+import { View, ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { ActivityIndicator, DataTable, Searchbar } from "react-native-paper";
+import {
+  collection,
+  limit,
+  query,
+  getDocs,
+  orderBy,
+  where,
+} from "firebase/firestore";
+import { firestore } from "../config.js";
+import { Modal, Portal, Button, PaperProvider } from "react-native-paper";
+import ModalComponent from "./Modal.js";
+// const allAnimeData = [
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Naruto",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+//   {
+//     anime: "Jujutsu Kaisen",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 2,
+//   },
+//   {
+//     anime: "Demon Slayer",
+//     genre: "Action",
+//     description: "Ninja adventures",
+//     rating: 4.8,
+//     ranking: 1,
+//   },
+// ];
 
+const allAnimeData = [];
 const PAGE_SIZE = 10;
-const allAnimeData = [
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Naruto",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-  {
-    anime: "Jujutsu Kaisen",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 2,
-  },
-  {
-    anime: "Demon Slayer",
-    genre: "Action",
-    description: "Ninja adventures",
-    rating: 4.8,
-    ranking: 1,
-  },
-];
-
 function AnimeTable() {
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState(allAnimeData);
+  const [numberOfItemsPerPageList] = React.useState([10, 20, 30]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [itemsPerPage, onItemsPerPageChange] = React.useState(
+    numberOfItemsPerPageList[0]
+  );
+  const [visible, setVisible] = useState(false);
+  const [selectedAnime, setSelectedAnime] = useState(null);
+
+  const showModal = (anime) => {
+    setSelectedAnime(anime);
+    setVisible(true);
+  };
+
+  const hideModal = () => {
+    setVisible(false);
+    setSelectedAnime(null);
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const q = query(collection(firestore, "animes"), orderBy("Popularity"));
+      const querySnapshot = await getDocs(q);
+      const allAnimeData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        Title: doc.data().Title,
+        Genre: doc.data().Genre,
+        Rating: doc.data().Rating,
+        Popularity: doc.data().Popularity,
+        Link: doc.data().Link,
+        Synopsis: doc.data().Synopsis,
+      }));
+      setFilteredData(allAnimeData);
+    } catch (error) {
+      console.error("Error fetching data from Firestore: ", error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
-      setFilteredData(allAnimeData);
+      fetchData();
     } else {
       const loweredSearchTerm = searchTerm.toLowerCase();
-      setFilteredData(
-        allAnimeData.filter((anime) => {
-          const stringMatch =
-            anime.anime.toLowerCase().includes(loweredSearchTerm) ||
-            anime.genre.toLowerCase().includes(loweredSearchTerm) ||
-            anime.description.toLowerCase().includes(loweredSearchTerm);
-          const numberMatch =
-            anime.rating.toString().includes(searchTerm) ||
-            anime.ranking.toString().includes(searchTerm);
-          return stringMatch || numberMatch;
-        })
-      );
+      const filterData = allAnimeData.filter((anime) => {
+        const titleMatch =
+          anime.Title.toLowerCase().includes(loweredSearchTerm);
+        return titleMatch;
+      });
+      console.log(filterData);
+      setFilteredData(filterData);
     }
   }, [searchTerm]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setPage(0);
   }, [filteredData]);
 
-  const from = page * PAGE_SIZE;
-  const to = (page + 1) * PAGE_SIZE;
-
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, filteredData.length);
   const dataToShow = filteredData.slice(from, to);
-
-  return (
+  return loading ? (
     <View style={styles.container}>
-      <Text style={styles.heading}>List of Anime</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search Anime..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-      />
-      <DataTable style={styles.dataTable}>
-        <DataTable.Header style={styles.header}>
-          <DataTable.Title textStyle={{ color: "white" }}>
-            Anime
-          </DataTable.Title>
-          <DataTable.Title textStyle={{ color: "white" }}>
-            Genre
-          </DataTable.Title>
-          <DataTable.Title textStyle={{ color: "white" }}>
-            Rating
-          </DataTable.Title>
-          <DataTable.Title textStyle={{ color: "white" }}>
-            Ranking
-          </DataTable.Title>
-        </DataTable.Header>
-
-        {dataToShow.map((anime, index) => (
-          <DataTable.Row key={index}>
-            <DataTable.Cell>{anime.anime}</DataTable.Cell>
-            <DataTable.Cell>{anime.genre}</DataTable.Cell>
-            <DataTable.Cell>{anime.rating}</DataTable.Cell>
-            <DataTable.Cell>{anime.ranking}</DataTable.Cell>
-          </DataTable.Row>
-        ))}
-
-        <DataTable.Pagination
-          page={page}
-          numberOfPages={Math.floor(filteredData.length / PAGE_SIZE)}
-          onPageChange={(newPage) => setPage(newPage)}
-          label={`${from + 1}-${to} of ${filteredData.length}`}
-        />
-      </DataTable>
+      <ActivityIndicator size="large" color="#113946" />
     </View>
+  ) : (
+    <>
+      <ScrollView style={styles.scrollViewStyle}>
+        <View style={styles.container}>
+          <>
+            <Text style={styles.heading}>List of Anime</Text>
+
+            <Searchbar
+              style={styles.searchInput}
+              placeholder="Search Anime..."
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+            />
+            <DataTable style={styles.dataTable}>
+              <DataTable.Header style={styles.header}>
+                <DataTable.Title textStyle={{ color: "white" }} flex={3}>
+                  Anime Title
+                </DataTable.Title>
+                <DataTable.Title textStyle={{ color: "white" }} flex={3}>
+                  Genre of Anime
+                </DataTable.Title>
+                <DataTable.Title textStyle={{ color: "white" }} flex={1}>
+                  Rating
+                </DataTable.Title>
+                <DataTable.Title textStyle={{ color: "white" }} flex={1}>
+                  Rank
+                </DataTable.Title>
+              </DataTable.Header>
+
+              {dataToShow.map((anime, index) => (
+                <DataTable.Row
+                  key={index}
+                  onPress={() => {
+                    showModal(anime);
+                  }}
+                >
+                  <DataTable.Cell flex={3}>{anime.Title}</DataTable.Cell>
+                  <DataTable.Cell flex={3}>
+                    {Array.isArray(anime.Genre)
+                      ? anime.Genre.join(", ")
+                      : anime.Genre}
+                  </DataTable.Cell>
+                  <DataTable.Cell flex={1}>{anime.Rating}</DataTable.Cell>
+                  <DataTable.Cell flex={1}>{anime.Popularity}</DataTable.Cell>
+                </DataTable.Row>
+              ))}
+
+              <DataTable.Pagination
+                page={page}
+                numberOfPages={Math.floor(filteredData.length / itemsPerPage)}
+                onPageChange={(newPage) => setPage(newPage)}
+                label={
+                  filteredData.length
+                    ? `${from + 1}-${to} of ${filteredData.length}`
+                    : 0
+                }
+                numberOfItemsPerPageList={numberOfItemsPerPageList}
+                numberOfItemsPerPage={itemsPerPage}
+                onItemsPerPageChange={onItemsPerPageChange}
+                showFastPaginationControls
+                selectPageDropdownLabel={"Rows per page"}
+              />
+            </DataTable>
+          </>
+        </View>
+        <ModalComponent
+          anime={selectedAnime}
+          visible={visible}
+          hideModal={hideModal}
+        />
+      </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollViewStyle: {
     flex: 1,
     backgroundColor: "#FFF2D8",
+  },
+  container: {
+    flex: 1,
+    // backgroundColor: "#FFF2D8",
     justifyContent: "center",
     paddingHorizontal: 10,
   },
@@ -354,6 +438,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 15,
+    marginTop: 10,
     color: "#113946",
   },
   header: {
@@ -378,7 +463,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(234, 215, 187, 0.7)",
     height: 50,
     borderRadius: 10,
-    paddingLeft: 15,
+    // paddingLeft: 15,
     color: "black",
     marginBottom: 10,
   },

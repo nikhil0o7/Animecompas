@@ -1,24 +1,34 @@
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
-  View,
-  TextInput,
-  Text,
+  Linking,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import Slider from "@react-native-community/slider";
-import SelectDropdown from "react-native-select-dropdown";
-import { Modal, Portal, Button, Provider } from "react-native-paper";
+import {
+  Button,
+  Modal,
+  Portal,
+  Provider,
+  Snackbar,
+  TextInput,
+} from "react-native-paper";
+import { firestore } from "../config.js";
+import GenreSelection from "./GenreSelection";
 
 const RecommendedAnime = () => {
   const [beginner, setBeginner] = useState(null);
-  const [genre, setGenre] = useState(null);
-  const [rating, setRating] = useState(1);
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
-  const beginnerOptions = ["Yes", "No"];
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const docRef = doc(firestore, "Genre", "inputGenres");
+  const [recommendedAnime, setRecommondedAnime] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [snackVisible, setSnackVisible] = useState(false);
   const genres = [
     "Action",
     "Adventure",
@@ -31,68 +41,128 @@ const RecommendedAnime = () => {
     "Sci-Fi",
   ];
 
-  const handleSubmit = () => {
-    showModal();
+  const handleSubmit = async () => {
+    const docRef = doc(firestore, "Genre", "inputTitle");
+    await setDoc(docRef, {
+      title: beginner,
+    })
+      .then(() => {
+        console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+    setLoading(true);
+    setSnackVisible(true);
+    setTimeout(() => {
+      displayTitleRecommendation();
+    }, 3000);
+  };
+
+  const displayTitleRecommendation = async () => {
+    const docRef = doc(firestore, "recommended_anime", "result");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setRecommondedAnime(docSnap.data().recommendations);
+      setLoading(false);
+      setSnackVisible(false);
+      showModal();
+    } else {
+      console.log("No such document!");
+    }
+  };
+
+  const onGenresSelected = async (genres) => {
+    setSelectedGenres(genres);
+    const passGenres = selectedGenres.join(", ");
+    await setDoc(docRef, {
+      Genre: passGenres,
+    })
+      .then(() => {
+        console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+    setSelectedGenres([]);
+    setLoading(true);
+    setSnackVisible(true);
+    setTimeout(() => {
+      displayGenreRecommendation();
+    }, 3000);
+  };
+
+  const displayGenreRecommendation = async () => {
+    const docRef = doc(firestore, "recommended_anime", "genre_result");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setRecommondedAnime(docSnap.data().recommendations);
+      setLoading(false);
+      setSnackVisible(false);
+      showModal();
+    } else {
+      console.log("No such document!");
+    }
   };
 
   return (
     <Provider style={{ backgroundColor: "#FFF2D8" }}>
       <View style={styles.container}>
         <Text style={styles.title}>Anime Recommendations</Text>
-
         <Text style={styles.label}>Anime Name?</Text>
         <TextInput
-          style={styles.input}
+          style={styles.inputPaper}
           placeholder="Enter Anime Name"
           onChangeText={setBeginner}
           placeholderTextColor="#BCA37F"
           value={beginner}
+          Type="outlined"
         />
-        {/* <SelectDropdown
-          data={beginnerOptions}
-          buttonTextAfterSelection={(selectedItem) => selectedItem}
-          rowTextForSelection={(item) => item}
-          dropdownIconColor="#113946"
-          buttonStyle={styles.input}
-          rowStyle={styles.input}
-          dropdownStyle={styles.dropdownStyle}
-          rowTextStyle={styles.rowText}
-        /> */}
-
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>
-            Get Recommendations (based on title){" "}
+            Get Recommendations (based on title)
           </Text>
         </TouchableOpacity>
-
         <Text style={styles.label}>Anime genre:</Text>
-        <SelectDropdown
-          data={genres}
-          onSelect={(selectedItem) => setGenre(selectedItem)}
-          buttonTextAfterSelection={(selectedItem) => selectedItem}
-          rowTextForSelection={(item) => item}
-          dropdownIconColor="#113946"
-          buttonStyle={styles.input}
-          rowStyle={styles.input}
-          dropdownStyle={styles.dropdownStyle}
-          rowTextStyle={styles.rowText}
-        />
-
-        <Text style={styles.label}>Rating:</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={1}
-          maximumValue={10}
-          step={0.5}
-          value={rating}
-          onValueChange={(value) => setRating(value)}
-          thumbTintColor="#113946"
-        />
-        <Text style={styles.ratingValue}>{rating.toFixed(1)}</Text>
-
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Get Recommendations</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setDialogVisible(true)}
+        >
+          <Text style={styles.buttonText}>
+            Get Recommendations(based on genres)
+          </Text>
         </TouchableOpacity>
+        {/* genre selection dialog */}
+        <GenreSelection
+          availableGenres={genres}
+          visible={dialogVisible}
+          onDismiss={() => setDialogVisible(false)}
+          onGenresSelected={onGenresSelected}
+        />
+        {loading && (
+          <Snackbar
+            visible={snackVisible}
+            style={{
+              alignSelf: "center",
+              width: 400,
+              height: 50,
+              justifyContent: "center",
+              marginLeft: 35,
+              backgroundColor: "white",
+              borderRadius: 10,
+              border: "1px solid black",
+            }}
+          >
+            <Text style={{ color: "black" }}>
+              {" "}
+              Please wait while the results are loading...{" "}
+            </Text>
+          </Snackbar>
+        )}
+
+        {/* <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Get Recommendations</Text>
+        </TouchableOpacity> */}
       </View>
       {/* This is the modal section */}
       <Portal>
@@ -101,12 +171,20 @@ const RecommendedAnime = () => {
           onDismiss={hideModal}
           contentContainerStyle={styles.modalContent}
         >
-          <Text>
-            These are your recommendations!!:{"\n"}
-            1. Naruto{"\n"}
-            2. One Piece{"\n"}
-            3. Bleach
-          </Text>
+          <Text>These are your recommendations:</Text>
+          {recommendedAnime.map((rec, index) => (
+            <React.Fragment key={index}>
+              <Text>
+                {index + 1}. {rec.Title} - Rating: {rec.Rating}
+              </Text>
+              <Text
+                onPress={() => Linking.openURL(rec.Link)}
+                style={{ color: "blue", marginBottom: 5 }}
+              >
+                {rec.Link}
+              </Text>
+            </React.Fragment>
+          ))}
           <Button onPress={hideModal}>Close</Button>
         </Modal>
       </Portal>
@@ -115,6 +193,16 @@ const RecommendedAnime = () => {
 };
 
 const styles = StyleSheet.create({
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    width: 410,
+    height: 600,
+    justifyContent: "center",
+    borderRadius: 10,
+    alignSelf: "center",
+    overflowY: "scroll",
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -174,11 +262,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 10,
   },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    marginHorizontal: 20,
-    borderRadius: 10,
+  inputPaper: {
+    backgroundColor: "rgba(234, 215, 187, 0.7)",
+    height: 35,
+    width: 390,
+    paddingHorizontal: 15,
+    justifyContent: "center",
+    borderColor: "black",
+    marginBottom: 10,
+    marginTop: 10,
   },
 });
 

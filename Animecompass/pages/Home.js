@@ -7,9 +7,9 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-          <IonIcon name="menu" size={30} color="#113946" />
-        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.toggleDrawer()}
+        ></TouchableOpacity>
         <Text style={styles.title}>AnimeCompass</Text>
         <IonIcon
           name="exit"
