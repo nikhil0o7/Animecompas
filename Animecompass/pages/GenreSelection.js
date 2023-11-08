@@ -31,14 +31,14 @@ const GenreSelection = ({
         style={{
           width: 400,
           padding: 5,
-          height: 400,
+          height: 600,
           alignSelf: "center",
           overflowY: "scroll",
         }}
       >
         <Dialog.Title>Select Genres</Dialog.Title>
         <Dialog.Content style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <Text style={{ fontWeight: "bold", marginBottom: 10 }}>
+          <Text style={{ fontWeight: "bold", marginBottom: 20 }}>
             Select one or multiple genres, based on your interest
           </Text>
           {availableGenres.map((genre) => (
@@ -52,7 +52,7 @@ const GenreSelection = ({
             </Chip>
           ))}
         </Dialog.Content>
-        <Dialog.Actions style={{ marginTop: 100 }}>
+        <Dialog.Actions style={{ marginTop: 50 }}>
           <Button onPress={onDismiss}>Cancel</Button>
           <Button onPress={handleOk}>Ok</Button>
         </Dialog.Actions>

@@ -34,10 +34,27 @@ const RecommendedAnime = () => {
     "Adventure",
     "Comedy",
     "Drama",
+    "Magic",
+    "Shonen",
+    "Military",
+    "Slice of Life",
+    "Game",
+    "Supernatural",
+    "Ecchi",
+    "Super Power",
+    "Mecha",
+    "Psychological",
+    "Seinen",
+    "Sports",
+    "School",
+    "Demons",
+    "Harem",
+    "Historical",
     "Fantasy",
     "Horror",
     "Mystery",
     "Romance",
+    "Thriller",
     "Sci-Fi",
   ];
 
@@ -154,8 +171,7 @@ const RecommendedAnime = () => {
             }}
           >
             <Text style={{ color: "black" }}>
-              {" "}
-              Please wait while the results are loading...{" "}
+              Please wait while the results are loading...
             </Text>
           </Snackbar>
         )}
