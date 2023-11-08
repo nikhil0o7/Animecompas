@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -11,11 +11,13 @@ import {
 import { auth } from "../config";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { AuthContext } from "../utils/AuthContext";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailValidationMessage, setEmailValidationMessage] = useState("");
+  const user = useContext(AuthContext); // Use AuthContext to access the user
 
   const validateEmail = () => {
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;

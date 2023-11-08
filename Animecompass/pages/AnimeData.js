@@ -1,16 +1,8 @@
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, DataTable, Searchbar } from "react-native-paper";
-import {
-  collection,
-  limit,
-  query,
-  getDocs,
-  orderBy,
-  where,
-} from "firebase/firestore";
 import { firestore } from "../config.js";
-import { Modal, Portal, Button, PaperProvider } from "react-native-paper";
 import ModalComponent from "./Modal.js";
 // const allAnimeData = [
 //   {

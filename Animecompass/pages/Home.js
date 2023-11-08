@@ -1,9 +1,35 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import IonIcon from "react-native-vector-icons/Ionicons";
 import { Card, Avatar, IconButton } from "react-native-paper";
+import { AuthContext } from "../utils/AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "../config";
 
 const Home = ({ navigation }) => {
+  const { user, setUser } = useContext(AuthContext);
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+        navigation.navigate("Login");
+      }
+    });
+    return () => unsubscribe();
+  }, [navigation]);
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        navigation.navigate("Login");
+      })
+      .catch((error) => {
+        console.error("Sign out error:", error);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -15,7 +41,7 @@ const Home = ({ navigation }) => {
           name="exit"
           size={30}
           color="#113946"
-          onPress={() => navigation.navigate("Login")}
+          onPress={handleSignOut}
         />
       </View>
 
