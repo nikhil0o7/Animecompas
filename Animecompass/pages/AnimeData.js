@@ -304,18 +304,20 @@ function AnimeTable() {
     setLoading(false);
   };
 
+  //search
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      fetchData();
+    if (searchTerm !== "") {
+      setFilteredData(
+        filteredData.filter((anime) => {
+          const a = anime.Title.toLowerCase().includes(searchTerm.toLowerCase());
+          if (a) {
+            console.log(a);
+            return a;
+          }
+        })
+      );
     } else {
-      const loweredSearchTerm = searchTerm.toLowerCase();
-      const filterData = allAnimeData.filter((anime) => {
-        const titleMatch =
-          anime.Title.toLowerCase().includes(loweredSearchTerm);
-        return titleMatch;
-      });
-      console.log(filterData);
-      setFilteredData(filterData);
+      fetchData();
     }
   }, [searchTerm]);
 
@@ -330,6 +332,7 @@ function AnimeTable() {
   const from = page * itemsPerPage;
   const to = Math.min((page + 1) * itemsPerPage, filteredData.length);
   const dataToShow = filteredData.slice(from, to);
+
   return loading ? (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color="#113946" />
