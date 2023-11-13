@@ -311,7 +311,6 @@ function AnimeTable() {
         filteredData.filter((anime) => {
           const a = anime.Title.toLowerCase().includes(searchTerm.toLowerCase());
           if (a) {
-            console.log(a);
             return a;
           }
         })

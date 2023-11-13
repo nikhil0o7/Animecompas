@@ -64,10 +64,10 @@ const RecommendedAnime = () => {
       title: beginner,
     })
       .then(() => {
-        console.log("Document successfully updated!");
+        // console.log("Document successfully updated!");
       })
       .catch((error) => {
-        console.error("Error updating document: ", error);
+        // console.error("Error updating document: ", error);
       });
     setLoading(true);
     setSnackVisible(true);
@@ -84,8 +84,6 @@ const RecommendedAnime = () => {
       setLoading(false);
       setSnackVisible(false);
       showModal();
-    } else {
-      console.log("No such document!");
     }
   };
 
@@ -96,10 +94,10 @@ const RecommendedAnime = () => {
       Genre: passGenres,
     })
       .then(() => {
-        console.log("Document successfully updated!");
+        // console.log("Document successfully updated!");
       })
       .catch((error) => {
-        console.error("Error updating document: ", error);
+        // console.error("Error updating document: ", error);
       });
     setSelectedGenres([]);
     setLoading(true);
@@ -117,8 +115,6 @@ const RecommendedAnime = () => {
       setLoading(false);
       setSnackVisible(false);
       showModal();
-    } else {
-      console.log("No such document!");
     }
   };
 
