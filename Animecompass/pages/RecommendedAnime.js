@@ -89,7 +89,7 @@ const RecommendedAnime = () => {
 
   const onGenresSelected = async (genres) => {
     setSelectedGenres(genres);
-    const passGenres = selectedGenres.join(", ");
+    const passGenres = genres.join(", ");
     await setDoc(docRef, {
       Genre: passGenres,
     })
@@ -99,11 +99,12 @@ const RecommendedAnime = () => {
       .catch((error) => {
         // console.error("Error updating document: ", error);
       });
-    setSelectedGenres([]);
+
     setLoading(true);
     setSnackVisible(true);
     setTimeout(() => {
       displayGenreRecommendation();
+      setSelectedGenres([]);
     }, 3000);
   };
 

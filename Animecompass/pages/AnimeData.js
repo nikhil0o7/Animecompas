@@ -309,7 +309,9 @@ function AnimeTable() {
     if (searchTerm !== "") {
       setFilteredData(
         filteredData.filter((anime) => {
-          const a = anime.Title.toLowerCase().includes(searchTerm.toLowerCase());
+          const a = anime.Title.toLowerCase().includes(
+            searchTerm.toLowerCase()
+          );
           if (a) {
             return a;
           }
@@ -345,7 +347,7 @@ function AnimeTable() {
 
             <Searchbar
               style={styles.searchInput}
-              placeholder="Search Anime..."
+              placeholder="Search Anime by Title..."
               value={searchTerm}
               onChangeText={setSearchTerm}
             />
