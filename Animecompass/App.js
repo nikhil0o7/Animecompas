@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { PaperProvider } from "react-native-paper";
 import HomeScreen from "./pages/HomeScreen";
 import { AuthProvider } from "./utils/AuthContext";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const queryClient = new QueryClient();
 const Stack = createStackNavigator();
@@ -22,6 +23,7 @@ export default function App() {
           <NavigationContainer>
             <Stack.Navigator initialRouteName="Login">
               <Stack.Screen name="HomeScreen" component={HomeScreen} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
               <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="SignUp" component={SignUp} />

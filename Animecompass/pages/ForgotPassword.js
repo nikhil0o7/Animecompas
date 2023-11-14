@@ -10,15 +10,19 @@ import {
 } from "react-native";
 import { auth } from "../config";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { AuthContext } from "../utils/AuthContext";
 
-export default function Login({ navigation }) {
+export default function ForgotPassword({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailValidationMessage, setEmailValidationMessage] = useState("");
   const user = useContext(AuthContext); // Use AuthContext to access the user
-
+  const auth = getAuth();
   const validateEmail = () => {
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     if (!emailPattern.test(email)) {
@@ -28,30 +32,9 @@ export default function Login({ navigation }) {
     }
   };
 
-  const loginUser = async (e) => {
+  const sendEmail = async (e) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setEmail("");
-        setPassword("");
-        navigation.navigate("HomeScreen");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        if (
-          errorCode === "auth/invalid-email" ||
-          errorCode === "auth/wrong-password"
-        ) {
-          Alert.alert(
-            "Invalid Credentials",
-            "The email or password is incorrect. Please try again."
-          );
-        } else {
-          Alert.alert("Error", errorMessage);
-        }
-      });
+    sendPasswordResetEmail(auth, email);
   };
   return (
     <View style={styles.container}>
@@ -68,31 +51,17 @@ export default function Login({ navigation }) {
       {emailValidationMessage ? (
         <Text style={styles.validationMessage}>{emailValidationMessage}</Text>
       ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#BCA37F"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ForgotPassword");
+          navigation.navigate("Login");
         }}
       >
-        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        <Text style={styles.forgotPasswordText}>Remember your Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={loginUser}>
-        <Text style={styles.buttonText}>Sign In</Text>
+      <TouchableOpacity style={styles.button} onPress={sendEmail}>
+        <Text style={styles.buttonText}>Send Email</Text>
       </TouchableOpacity>
-      {/* <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
-        <Image
-          source={require("./../assets/google.png")} // Replace with the path to your Google icon.
-          style={styles.googleIcon}
-        />
-        <Text style={styles.googleButtonText}>Sign In with Google</Text>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
         <Text style={styles.signupText}>Not a member? Register now</Text>
       </TouchableOpacity>

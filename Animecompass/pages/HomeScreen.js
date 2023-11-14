@@ -6,12 +6,12 @@ export default function HomeScreen({ navigation }) {
   return (
     <TouchableRipple
       style={styles.ripple}
-      onPress={() => navigation.navigate("Home")} // Replace 'Home' with the actual route you want to navigate to
+      onPress={() => navigation.navigate("Home")}
       rippleColor="rgba(0, 0, 0, .32)"
     >
       <View style={styles.container}>
         <Image
-          source={require("../assets/naruto.png")} // Make sure this path is correct
+          source={require("../assets/naruto.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -21,9 +21,8 @@ export default function HomeScreen({ navigation }) {
           enthusiast. Whether you're looking to discover shows similar to your
           favorites, explore by genre, or simply find your next anime adventure,
           you've arrived at the perfect destination. Begin your journey to the
-          next great watch with us!{" "}
+          next great watch with us!
         </Text>
-        {/* You can add more content here if needed */}
       </View>
     </TouchableRipple>
   );
